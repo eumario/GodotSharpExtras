@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Mario Steele</Authors>
+    <Company/>
+    <Description>A set of tools to allow easier interfacing with Godot.</Description>
+    <Copyright>Copyright (c) 2021 Mario Steele</Copyright>
+    <PackageLicenseUrl>https://github.com/eumario/GodotSharpExtras/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/eumario/GodotSharpExtras</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/eumario/GodotSharpExtras</RepositoryUrl>
+    <PackageReleaseNotes>Built against 3.3.0 assemblies</PackageReleaseNotes>
+    <Version>0.0.1</Version>
+    <PackageTags>godot</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="GodotSharp">
+      <HintPath>$(ProjectDir)\.mono\assemblies\Debug\GodotSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GodotSharpEditor">
+      <HintPath>$(ProjectDir)\.mono\assemblies\Debug\GodotSharpEditor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>
