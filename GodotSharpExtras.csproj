@@ -1,18 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>Mario Steele</Authors>
-    <Company/>
+    <Version>0.1.0</Version>
+    <!-- Nuget Tags -->
+    <AssemblyTitle>Godot Sharp Extras</AssemblyTitle>
     <Description>A set of tools to allow easier interfacing with Godot.</Description>
-    <Copyright>Copyright (c) 2021 Mario Steele</Copyright>
-    <PackageLicenseUrl>https://github.com/eumario/GodotSharpExtras/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/eumario/GodotSharpExtras</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/eumario/GodotSharpExtras</RepositoryUrl>
-    <PackageReleaseNotes>Built against 3.3.0 assemblies</PackageReleaseNotes>
-    <Version>0.0.1</Version>
     <PackageTags>godot</PackageTags>
+    <Authors>Mario Steele</Authors>
+    <RepositoryUrl>https://github.com/eumario/GodotSharpExtras</RepositoryUrl>
+    <license>MIT</license>
+    <PackageProjectUrl>https://github.com/eumario/GodotSharpExtras</PackageProjectUrl>
+    <Copyright>Copyright (c) 2021 Mario Steele</Copyright>
+    <PackageReleaseNotes>Initial Release, Built against 3.3.0 assemblies.  Based on work by Sam Bloomberg.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
