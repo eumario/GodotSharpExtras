@@ -10,7 +10,7 @@
     <PackageTags>godot</PackageTags>
     <Authors>Mario Steele</Authors>
     <RepositoryUrl>https://github.com/eumario/GodotSharpExtras</RepositoryUrl>
-    <license>MIT</license>
+    <LicenseUrl>https://github.com/eumario/GodotSharpExtras/blob/master/LICENSE</LicenseUrl>
     <PackageProjectUrl>https://github.com/eumario/GodotSharpExtras</PackageProjectUrl>
     <Copyright>Copyright (c) 2021 Mario Steele</Copyright>
     <PackageReleaseNotes>Initial Release, Built against 3.3.0 assemblies.  Based on work by Sam Bloomberg.</PackageReleaseNotes>
