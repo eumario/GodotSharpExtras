@@ -1,6 +1,6 @@
 using System;
 
-namespace GodotSharpExtras
+namespace Godot.Sharp.Extras
 {
 	/// <summary>
 	/// Fields with this attribute will have their value set based on a NodePath in another field.

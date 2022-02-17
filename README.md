@@ -34,7 +34,7 @@ NodePath will use a String Path to the Node that you want to access from the God
 Example:
 ```cs
 using Godot;
-using GodotSharpExtras;
+using Godot.Sharp.Extras;
 
 public class MyNode : Container {
     [NodePath("Container/Label")]
@@ -54,7 +54,7 @@ ResolveNode allows an exported variable to the editor, to receive a NodePath, th
 Example:
 ```cs
 using Godot;
-using GodotSharpExtras;
+using Godot.Sharp.Extras;
 
 public class MyNode : Node2D {
   [Export]
@@ -71,13 +71,36 @@ public class MyNode : Node2D {
 }
 ```
 
+## SignalHandler
+SignalHandler allows you to connect node signals to methods to automatically be connected when OnReady is executed.  You provide the Signal you wish to connect, along with the property or field of the variable holding the Node reference, to connect said signal.  If the property or field does not exist, will throw an exception.
+
+Example:
+```cs
+using Godot;
+using Godot.Sharp.Extras;
+
+public class MyNode : Node2D {
+    [NodePath("VBoxContainer/MyButton")]
+    Button _myButton = null;
+
+    public override void _Ready() {
+      this.OnReady();
+    }
+
+    [SignalHandler("pressed", nameof(_myButton))]
+    void OnPressed_MyButton() {
+      GD.Print("Hello World!");
+    }
+}
+```
+
 ## Caveats
 When compiling using NodePath, and ResolveNode, the compiler will give a warning about a variable associated with these two attributes, will never be assigned to, or have a value.  This is because the compiler doesn't recognize that we are using the Extension Method OnReady() to actually assign values to these variables, the way to surpress this warning, is simply to assign null to the value of the variable, to surpress this warning.
 
 Example:
 ```cs
 using Godot;
-using GodotSharpExtras;
+using Godot.Sharp.Extras;
 
 public class MyNode : Container {
   [Export]
@@ -100,7 +123,7 @@ C:\MyProject\Label.cs (7,16): warning CS0649: Field 'ColorLabel.MarginContainer'
 While doing this will solve the issue:
 ```cs
 using Godot;
-using GodotSharpExtras;
+using Godot.Sharp.Extras;
 
 public class MyNode : Container {
   [Export]

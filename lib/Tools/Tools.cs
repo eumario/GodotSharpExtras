@@ -2,9 +2,9 @@ using System;
 using System.Reflection;
 using Godot;
 
-namespace GodotSharpExtras
+namespace Godot.Sharp.Extras
 {
-	public static class GodotExtras
+	public static class Tools
 	{
 		/// <summary>
 		/// Processes all Attributes for NodePaths.
@@ -50,6 +50,43 @@ namespace GodotSharpExtras
 					}
 				}
 			}
+
+			foreach (var func in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
+			{
+				foreach (var funcAttr in func.GetCustomAttributes()) {
+					switch(funcAttr) {
+						case SignalHandlerAttribute signalAttr:
+							ConnectSignalHandler(node, func, signalAttr);
+							break;
+					}
+				}
+			}
+		}
+
+		private static void ConnectSignalHandler(Node node, MethodInfo func, SignalHandlerAttribute attr) {
+			var signal = attr.SignalName;
+			Node recv = null;
+
+			foreach(var field in node.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) {
+				if (field.Name == attr.TargetNodeField) {
+					recv = (Node)field.GetValue(node);
+					break;
+				}
+			}
+
+			if (recv == null) {
+				foreach (var property in node.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) {
+					if (property.Name == attr.TargetNodeField) {
+						recv = (Node)property.GetValue(node);
+						break;
+					}
+				}
+			}
+
+			if (recv == null) {
+				throw new Exception($"SignalHandlerAttribute on '{node.GetType().FullName}.{func.Name}`, '{attr.TargetNodeField}' is a nonexistant field or property.");
+			}
+			recv.Connect(signal, node, func.Name);
 		}
 
 		private static void ResolveNodeFromPathField(Node node, FieldInfo field, ResolveNodeAttribute attr)
