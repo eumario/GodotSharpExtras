@@ -117,7 +117,7 @@ public class MyNode : Container {
 Will Generate this warning:
 
 ```
-C:\MyProject\Label.cs (7,16): warning CS0649: Field 'ColorLabel.MarginContainer' is never assigned to, and will always have its default value null [C:\MyProject\MyProject.csproj]
+C:\MyProject\MyNode.cs (6,15): warning CS0649: Field 'MyNode.MyLabel' is never assigned to, and will always have its default value null [C:\MyProject\MyProject.csproj]
 ```
 
 While doing this will solve the issue:
