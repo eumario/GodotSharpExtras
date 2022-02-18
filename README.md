@@ -94,6 +94,33 @@ public class MyNode : Node2D {
 }
 ```
 
+Example 2 (Connect to the node itself):
+```cs
+using Godot;
+using Godot.Sharp.Extras;
+
+public class MyControl : Control
+{
+    [NodePath("ColorRect")]
+    ColorRect _color = null;
+    
+    public override void _Ready()
+    {
+        this.OnReady();
+    }
+    
+    [SignalHandler("mouse_entered")]
+    void OnMouseEntered() {
+        _color.Color = new Color(0,1,0);
+    }
+    
+    [SignalHandler("mouse_exited")]
+    void OnMouseExited() {
+        _color.Color = new Color(0,0,1);
+    }
+}
+```
+
 ## Caveats
 When compiling using NodePath, and ResolveNode, the compiler will give a warning about a variable associated with these two attributes, will never be assigned to, or have a value.  This is because the compiler doesn't recognize that we are using the Extension Method OnReady() to actually assign values to these variables, the way to surpress this warning, is simply to assign null to the value of the variable, to surpress this warning.
 
