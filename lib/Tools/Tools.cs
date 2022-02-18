@@ -67,6 +67,11 @@ namespace Godot.Sharp.Extras
 			var signal = attr.SignalName;
 			Node recv = null;
 
+			if (attr.TargetNodeField == "") {
+				node.Connect(signal, node, func.Name);
+				return;
+			}
+
 			foreach(var field in node.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) {
 				if (field.Name == attr.TargetNodeField) {
 					recv = (Node)field.GetValue(node);
