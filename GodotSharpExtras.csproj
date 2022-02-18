@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.2.1</Version>
+    <Version>0.2.2</Version>
     <!-- Nuget Tags -->
     <AssemblyTitle>Godot Sharp Extras</AssemblyTitle>
     <Description>A set of tools to allow easier interfacing with Godot.</Description>

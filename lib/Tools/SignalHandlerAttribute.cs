@@ -8,7 +8,7 @@ namespace Godot.Sharp.Extras
 	/// <remarks>
 	/// This is used to make code more readable, and easier to extend, without having to constantly add to the _Ready() function.
 	/// </remarks>
-	[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
 	public class SignalHandlerAttribute : Attribute
 	{
 		public string TargetNodeField {

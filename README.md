@@ -74,23 +74,23 @@ public class MyNode : Node2D {
 ## SignalHandler
 SignalHandler allows you to connect node signals to methods to automatically be connected when OnReady is executed.  You provide the Signal you wish to connect, along with the property or field of the variable holding the Node reference, to connect said signal.  If the property or field does not exist, will throw an exception.
 
-Example:
+Example 1 (Standard Connect to node defined by NodePath/ResolvePath):
 ```cs
 using Godot;
 using Godot.Sharp.Extras;
 
 public class MyNode : Node2D {
-    [NodePath("VBoxContainer/MyButton")]
-    Button _myButton = null;
+  [NodePath("VBoxContainer/MyButton")]
+  Button _myButton = null;
 
-    public override void _Ready() {
-      this.OnReady();
-    }
+  public override void _Ready() {
+    this.OnReady();
+  }
 
-    [SignalHandler("pressed", nameof(_myButton))]
-    void OnPressed_MyButton() {
-      GD.Print("Hello World!");
-    }
+  [SignalHandler("pressed", nameof(_myButton))]
+  void OnPressed_MyButton() {
+    GD.Print("Hello World!");
+  }
 }
 ```
 
@@ -101,23 +101,49 @@ using Godot.Sharp.Extras;
 
 public class MyControl : Control
 {
-    [NodePath("ColorRect")]
-    ColorRect _color = null;
+  [NodePath("ColorRect")]
+  ColorRect _color = null;
     
-    public override void _Ready()
-    {
-        this.OnReady();
-    }
+  public override void _Ready()
+  {
+    this.OnReady();
+  }
     
-    [SignalHandler("mouse_entered")]
-    void OnMouseEntered() {
-        _color.Color = new Color(0,1,0);
-    }
+  [SignalHandler("mouse_entered")]
+  void OnMouseEntered() {
+    _color.Color = new Color(0,1,0);
+  }
     
-    [SignalHandler("mouse_exited")]
-    void OnMouseExited() {
-        _color.Color = new Color(0,0,1);
-    }
+  [SignalHandler("mouse_exited")]
+  void OnMouseExited() {
+    _color.Color = new Color(0,0,1);
+  }
+}
+```
+
+Example 3 (Chaining Multiple Nodes to the Same Function):
+```cs
+using Godot;
+using Godot.Sharp.Extras;
+
+public class MyPanel : Panel
+{
+  [NodePath("Button1")]
+  Button _button1 = null;
+
+  [NodePath("Button2")]
+  Button _button2 = null;
+
+  public override void _Ready()
+  {
+    this.OnReady();
+  }
+
+  [SignalHandler("pressed", nameof(_button1))]
+  [SignalHandler("pressed", nameof(_button2))]
+  void OnButtonPressed() {
+    GD.Print("A button has been pressed.");
+  }
 }
 ```
 
