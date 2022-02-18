@@ -68,7 +68,8 @@ namespace Godot.Sharp.Extras
 			Node recv = null;
 
 			if (attr.TargetNodeField == "") {
-				node.Connect(signal, node, func.Name);
+				if (!node.IsConnected(signal, node, func.Name))
+					node.Connect(signal, node, func.Name);
 				return;
 			}
 
@@ -91,7 +92,8 @@ namespace Godot.Sharp.Extras
 			if (recv == null) {
 				throw new Exception($"SignalHandlerAttribute on '{node.GetType().FullName}.{func.Name}`, '{attr.TargetNodeField}' is a nonexistant field or property.");
 			}
-			recv.Connect(signal, node, func.Name);
+			if (!recv.IsConnected(signal, node, func.Name))
+				recv.Connect(signal, node, func.Name);
 		}
 
 		private static void ResolveNodeFromPathField(Node node, FieldInfo field, ResolveNodeAttribute attr)
