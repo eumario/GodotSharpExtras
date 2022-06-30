@@ -18,7 +18,7 @@ namespace Godot.Sharp.Extras
 		/// Constructs a <see cref="NodePathAttribute"/>
 		/// </summary>
 		/// <param name="path">The path to the node, relative to the current node.</param>
-		public NodePathAttribute(string path)
+		public NodePathAttribute(string path = "")
 		{
 			this.NodePath = path;
 		}

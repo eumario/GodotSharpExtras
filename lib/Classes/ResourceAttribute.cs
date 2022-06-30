@@ -9,7 +9,7 @@ namespace Godot.Sharp.Extras {
 		public string ResourcePath { get; set; }
 
 		public ResourceAttribute(string path) {
-			ResourcePath = path;
+			this.ResourcePath = path;
 		}
 	}
 

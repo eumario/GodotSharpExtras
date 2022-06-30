@@ -44,6 +44,9 @@ namespace Godot.Sharp.Extras
 						case ResourceAttribute resAttr:
 							LoadResource(node, member, resAttr.ResourcePath);
 							break;
+						case SingletonAttribute singAttr:
+							LoadSingleton(node, member, singAttr.Name);
+							break;
 					}
 				}
 			}
@@ -67,19 +70,20 @@ namespace Godot.Sharp.Extras
 
 		private static void ConnectSignalHandler(Node node, string methodName, SignalHandlerAttribute attr) {
 			var signal = attr.SignalName;
+			Node sender = null;
 
 			if (!string.IsNullOrEmpty(attr.TargetNodeField))
 			{
 				MemberInfo[] members = typeMembers[node.GetType()];
 				MemberInfo? member = members.FirstOrDefault(mi => mi.Name == attr.TargetNodeField);
 
-				node = member?.GetValue(node) as Node
+				sender = member?.GetValue(node) as Node
 					?? throw new Exception($"SignalHandlerAttribute on '{node.GetType().FullName}.{methodName}', '{attr.TargetNodeField}' is a nonexistant field or property.");
 			}
 
-			if (!node.IsConnected(signal, node, methodName))
+			if (!sender.IsConnected(signal, node, methodName))
 			{
-				node.Connect(signal, node, methodName);
+				sender.Connect(signal, node, methodName);
 			}
 		}
 
@@ -102,33 +106,69 @@ namespace Godot.Sharp.Extras
 			try {
 				res = GD.Load(resourcePath);
 			} catch (Exception ex) {
-				throw new Exception($"Failed to load Resource '{resourcePath}', Message: '{ex.Message}'.");
+				throw new Exception($"Failed to load Resource '{resourcePath}', Message: '{ex.Message}'.", ex);
+			}
+
+			if (res == null) {
+				throw new Exception($"Failed to load Resource '{resourcePath}`, File not found!");
 			}
 
 			try {
-				member.SetValue(node, Convert.ChangeType(res, member.MemberType));
-			} catch (Exception)
+				member.SetValue(node, res);
+			} catch (Exception ex)
 			{
-				throw new Exception($"Failed to set variable {member.Name} with the {member.MemberType} for {resourcePath}.");
+				throw new Exception($"Failed to set variable {member.Name} with the {member.MemberType} for {resourcePath}.",ex);
+			}
+		}
+
+		private static Node TryGetNode(Node node, List<string> names) {
+			foreach(string name in names) {
+				if (name.Empty()) continue;
+				if (node.HasNode(name))
+					return node.GetNode(name);
+			}
+			return null;
+		}
+
+		private static void LoadSingleton(Node node, MemberInfo member, string name) {
+			List<string> names = new List<string>()
+			{
+				name.Empty() ? name : $"/root/{name}",
+				$"/root/{member.MemberType.Name}",
+				$"/root/{member.Name}"
+			};
+
+			Node value = TryGetNode(node, names);
+
+			if (value == null) {
+				throw new Exception($"Failed to load Singleton/Autoload for {member.MemberType.Name}.  Node was not found at /root with the following names: {string.Join(",", names.ToArray())}");
+			}
+			try {
+				member.SetValue(node, value);
+			} catch (Exception ex) {
+				throw new Exception($"Failed to load Singleton/Autoload for {member.MemberType.Name}.  Error setting node value for {member.Name}.", ex);
 			}
 		}
 
 		private static void AssignPathToMember(Node node, MemberInfo member, NodePath path)
 		{
-			if (node.GetNode(path) is Node value)
+			List<string> names = new List<string>()
 			{
-				try
-				{
-					member.SetValue(node,value);
-				}
-				catch (ArgumentException e)
-				{
-					throw new Exception($"AssignPathToMember on {node.GetType().FullName}.{member.Name} - cannot set value of type {value?.GetType().Name} on field type {member.MemberType.Name}", e);
-				}
+				path.ToString(),
+				member.MemberType.Name,
+				member.Name
+			};
+			Node value = TryGetNode(node, names);
+
+			if (value == null)
+				throw new Exception($"AssignPathToMember on {node.GetType().FullName}.{member.Name} - Unable to find node with the following names: {string.Join(",", names.ToArray())}");
+			try
+			{
+				member.SetValue(node,value);
 			}
-			else
+			catch (ArgumentException e)
 			{
-				GD.Print($"Warning: AssignPathToMember on {node.GetType().FullName}.{member.Name} - node at \"{path}\" is null");
+				throw new Exception($"AssignPathToMember on {node.GetType().FullName}.{member.Name} - cannot set value of type {value?.GetType().Name} on field type {member.MemberType.Name}", e);
 			}
 		}
 
