@@ -41,6 +41,9 @@ namespace Godot.Sharp.Extras
 						case NodePathAttribute pathAttr:
 							AssignPathToMember(node, member, pathAttr.NodePath);
 							break;
+						case ResourceAttribute resAttr:
+							LoadResource(node, member, resAttr.ResourcePath);
+							break;
 					}
 				}
 			}
@@ -92,6 +95,21 @@ namespace Godot.Sharp.Extras
 					?? throw new Exception($"ResolveNodeAttribute on {type.FullName}.{member.Name} targets property {targetFieldName} which is not a NodePath");
 			
 			AssignPathToMember(node, member, path);
+		}
+
+		private static void LoadResource(Node node, MemberInfo member, string resourcePath) {
+			Resource res;
+			try {
+				res = GD.Load(resourcePath);
+			} catch (Exception ex) {
+				throw new Exception($"Failed to load Resource '{resourcePath}', Message: '{ex.Message}'.");
+			}
+
+			try {
+				member.SetValue(node, Convert.ChangeType(res, member.MemberType));
+			} catch (Exception ex) {
+				throw new Exception($"Failed to set variable {member.Name} with the {member.MemberType} for {resourcePath}.");
+			}
 		}
 
 		private static void AssignPathToMember(Node node, MemberInfo member, NodePath path)
@@ -147,6 +165,15 @@ namespace Godot.Sharp.Extras
 
 			public SignalHandlerInfo(string methodName, SignalHandlerAttribute attr) =>
 				(MethodName, Attribute) = (methodName, attr);
+		}
+
+		readonly struct ResourceInfo
+		{
+			public string MemberName { get; }
+			public ResourceAttribute Attribute { get; }
+			
+			public ResourceInfo(string memberName, ResourceAttribute attr) =>
+				(MemberName, Attribute) = (memberName, attr);
 		}
 
 		readonly private static Dictionary<Type, MemberInfo[]> typeMembers = new Dictionary<Type, MemberInfo[]>();
