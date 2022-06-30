@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Godot;
 
@@ -13,183 +15,142 @@ namespace Godot.Sharp.Extras
 		/// This will fill in fields and register signals as per attributes such as <see cref="NodePathAttribute"/> and <see cref="SignalAttribute"/>.
 		/// </remarks>
 		/// <param name="node">The node.</param>
-		public static void OnReady(this Node node)
+		public static void OnReady<T>(this T node)
+			where T : Node
 		{
 			var type = node.GetType();
-			foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+
+			if (typeMembers.TryGetValue(type, out var members) == false)
 			{
-				foreach(var attr in field.GetCustomAttributes()) 
+				var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+				members = type.GetFields(bindingFlags).Select(fi => new MemberInfo(fi))
+							.Concat(type.GetProperties(bindingFlags).Select(pi => new MemberInfo(pi)))
+							.ToArray();
+				typeMembers[type] = members;
+			}
+
+			foreach (var member in members)
+			{
+				foreach (var attr in member.CustomAttributes)
 				{
 					switch(attr)
 					{
 						case ResolveNodeAttribute resolveAttr:
-							ResolveNodeFromPathField(node, field, resolveAttr);
+							ResolveNodeFromPath(node, member, resolveAttr.TargetFieldName);
 							break;
-						
 						case NodePathAttribute pathAttr:
-							ResolveNodeFromPath(node, field, pathAttr);
+							AssignPathToMember(node, member, pathAttr.NodePath);
 							break;
 					}
 				}
 			}
 
-			foreach (var property in type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+			if (signalHandlers.TryGetValue(type, out var handlers) == false)
 			{
-				foreach(var attr in property.GetCustomAttributes())
-				{
-					switch(attr)
-					{
-						case ResolveNodeAttribute resolveAttr:
-							ResolveNodeFromPathField(node, property, resolveAttr);
-							break;
-						
-						case NodePathAttribute pathAttr:
-							ResolveNodeFromPath(node, property, pathAttr);
-							break;
-
-					}
-				}
+				handlers = type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
+							.SelectMany(mi => mi.GetCustomAttributes()
+								.OfType<SignalHandlerAttribute>()
+								.Select(attr => new SignalHandlerInfo(mi.Name, attr))
+							)
+							.ToArray();
+				signalHandlers[type] = handlers;
 			}
 
-			foreach (var func in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
+			foreach (var handler in handlers)
 			{
-				foreach (var funcAttr in func.GetCustomAttributes()) {
-					switch(funcAttr) {
-						case SignalHandlerAttribute signalAttr:
-							ConnectSignalHandler(node, func, signalAttr);
-							break;
-					}
-				}
+				ConnectSignalHandler(node, handler.MethodName, handler.Attribute);
 			}
 		}
 
-		private static void ConnectSignalHandler(Node node, MethodInfo func, SignalHandlerAttribute attr) {
+		private static void ConnectSignalHandler(Node node, string methodName, SignalHandlerAttribute attr) {
 			var signal = attr.SignalName;
-			Node recv = null;
 
-			if (attr.TargetNodeField == "") {
-				if (!node.IsConnected(signal, node, func.Name))
-					node.Connect(signal, node, func.Name);
-				return;
+			if (!string.IsNullOrEmpty(attr.TargetNodeField))
+			{
+				MemberInfo[] members = typeMembers[node.GetType()];
+				MemberInfo? member = members.FirstOrDefault(mi => mi.Name == attr.TargetNodeField);
+
+				node = member?.GetValue(node) as Node
+					?? throw new Exception($"SignalHandlerAttribute on '{node.GetType().FullName}.{methodName}', '{attr.TargetNodeField}' is a nonexistant field or property.");
 			}
 
-			foreach(var field in node.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) {
-				if (field.Name == attr.TargetNodeField) {
-					recv = (Node)field.GetValue(node);
-					break;
-				}
+			if (!node.IsConnected(signal, node, methodName))
+			{
+				node.Connect(signal, node, methodName);
 			}
-
-			if (recv == null) {
-				foreach (var property in node.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) {
-					if (property.Name == attr.TargetNodeField) {
-						recv = (Node)property.GetValue(node);
-						break;
-					}
-				}
-			}
-
-			if (recv == null) {
-				throw new Exception($"SignalHandlerAttribute on '{node.GetType().FullName}.{func.Name}`, '{attr.TargetNodeField}' is a nonexistant field or property.");
-			}
-			if (!recv.IsConnected(signal, node, func.Name))
-				recv.Connect(signal, node, func.Name);
 		}
 
-		private static void ResolveNodeFromPathField(Node node, FieldInfo field, ResolveNodeAttribute attr)
-		{
+		private static void ResolveNodeFromPath(Node node, MemberInfo member, string targetFieldName) {
 			var type = node.GetType();
-			var targetField = type.GetField(attr.TargetFieldName);
-			NodePath path;
-			if (targetField == null) {
-				var targetProperty = type.GetProperty(attr.TargetFieldName);
-				if (targetProperty == null)
-					throw new Exception($"ResolveNodeAttribute on {type.FullName}.{field.Name} targets nonexistant field or property {attr.TargetFieldName}");
+			MemberInfo targetMember = type.GetField(targetFieldName) is FieldInfo fi
+						? new MemberInfo(fi)
+						: type.GetProperty(targetFieldName) is PropertyInfo pi
+						? new MemberInfo(pi)
+						: throw new Exception($"ResolveNodeAttribute on {type.FullName}.{member.Name} targets nonexistant field or property {targetFieldName}");
+			
+			NodePath path = targetMember.GetValue(node) as NodePath
+					?? throw new Exception($"ResolveNodeAttribute on {type.FullName}.{member.Name} targets property {targetFieldName} which is not a NodePath");
+			
+			AssignPathToMember(node, member, path);
+		}
 
-				if (!typeof(NodePath).IsAssignableFrom(targetProperty.PropertyType))
-					throw new Exception($"ResolveNodeAttribute on {type.FullName}.{field.Name} targets property {attr.TargetFieldName} which is not a NodePath");
-				
-				path = (NodePath)targetProperty.GetValue(node);
+		private static void AssignPathToMember(Node node, MemberInfo member, NodePath path)
+		{
+			if (node.GetNode(path) is Node value)
+			{
+				try
+				{
+					member.SetValue(node,value);
+				}
+				catch (ArgumentException e)
+				{
+					throw new Exception($"AssignPathToMember on {node.GetType().FullName}.{member.Name} - cannot set value of type {value?.GetType().Name} on field type {member.MemberType.Name}", e);
+				}
 			}
 			else
 			{
-				if (!typeof(NodePath).IsAssignableFrom(targetField.FieldType))
-					throw new Exception($"ResolveNodeAttribute on {type.FullName}.{field.Name} targets field {attr.TargetFieldName} which is not a NodePath");
-				
-				path = (NodePath)targetField.GetValue(node);
+				GD.Print($"Warning: AssignPathToMember on {node.GetType().FullName}.{member.Name} - node at \"{path}\" is null");
 			}
-
-			AssignPathToField(node,field,path,"ResolveNodeAttribute");
 		}
 
-		private static void ResolveNodeFromPathField(Node node, PropertyInfo property, ResolveNodeAttribute attr)
+		readonly struct MemberInfo
 		{
-			var type = node.GetType();
-			var targetField = type.GetField(attr.TargetFieldName);
-			NodePath path;
-			if (targetField == null)
+			public string Name { get; }
+			public Type MemberType { get; }
+			public IEnumerable<Attribute> CustomAttributes { get; }
+			public Action<object, object> SetValue { get; }
+			public Func<object, object> GetValue { get; }
+
+			public MemberInfo(PropertyInfo pi)
 			{
-				var targetProperty = type.GetProperty(attr.TargetFieldName);
-				if (targetProperty == null)
-					throw new Exception($"ResolveNodeAttribute on {type.FullName}.{property.Name} targets nonexistant field or property {attr.TargetFieldName}");
-				
-				if (!typeof(NodePath).IsAssignableFrom(targetProperty.PropertyType))
-					throw new Exception($"ResolveNodeAttribute on {type.FullName}.{property.Name} targets property {attr.TargetFieldName} which is not a NodePath");
-				
-				path = (NodePath)targetProperty.GetValue(node);
-			}
-			else
-			{
-				if (!typeof(NodePath).IsAssignableFrom(targetField.FieldType))
-					throw new Exception($"ResolveNodeAttribute on {type.FullName}.{property.Name} target field {attr.TargetFieldName} which is not a NodePath");
-				
-				path = (NodePath)targetField.GetValue(node);
+				this.Name = pi.Name;
+				this.MemberType = pi.PropertyType;
+				this.CustomAttributes = pi.GetCustomAttributes();
+				this.SetValue = pi.SetValue;
+				this.GetValue = pi.GetValue;
 			}
 
-			AssignPathToProperty(node, property, path, "ResolveNodeAttribute");
+			public MemberInfo(FieldInfo fi)
+			{
+				this.Name = fi.Name;
+				this.MemberType = fi.FieldType;
+				this.CustomAttributes = fi.GetCustomAttributes();
+				this.SetValue = fi.SetValue;
+				this.GetValue = fi.GetValue;
+			}
 		}
 
-		private static void ResolveNodeFromPath(Node node, FieldInfo field, NodePathAttribute attr) {
-			AssignPathToField(node, field, attr.NodePath, "NodePathAttribute");
-		}
-
-		private static void ResolveNodeFromPath(Node node, PropertyInfo property, NodePathAttribute attr) {
-			AssignPathToProperty(node, property, attr.NodePath, "NodePathAttribute");
-		}
-
-		private static void AssignPathToField(Node node, FieldInfo field, string path, string source)
+		readonly struct SignalHandlerInfo
 		{
-			var value = node.GetNode(path);
-			if (value == null)
-			{
-				GD.Print($"Warning: {source} on {node.GetType().FullName}.{field.Name} - node at \"{path}\" is null");
-			}
+			public string MethodName { get; }
+			public SignalHandlerAttribute Attribute { get; }
 
-			try
-			{
-				field.SetValue(node, value);
-			}
-			catch(ArgumentException e)
-			{
-				throw new Exception($"{source} on {node.GetType().FullName}.{field.Name} - cannot set value of type {value?.GetType().Name} on field type {field.FieldType.Name}", e);
-			}
+			public SignalHandlerInfo(string methodName, SignalHandlerAttribute attr) =>
+				(MethodName, Attribute) = (methodName, attr);
 		}
 
-		private static void AssignPathToProperty(Node node, PropertyInfo property, string path, string source) {
-			var value = node.GetNode(path);
-			if (value == null)
-			{
-				GD.Print($"Warning: {source} on {node.GetType().FullName}.{property.Name} - node at \"{path}\" is null");
-			}
+		readonly private static Dictionary<Type, MemberInfo[]> typeMembers = new Dictionary<Type, MemberInfo[]>();
+		readonly private static Dictionary<Type, SignalHandlerInfo[]> signalHandlers = new Dictionary<Type, SignalHandlerInfo[]>();
 
-			try
-			{
-				property.SetValue(node, value);
-			}
-			catch (ArgumentException e)
-			{
-				throw new Exception($"{source} on {node.GetType().FullName}.{property.Name} - cannot set value of type {value?.GetType().Name} on field type {property.PropertyType.Name}", e);
-			}
-		}
 	}
 }
