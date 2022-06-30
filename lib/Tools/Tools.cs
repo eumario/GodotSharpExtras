@@ -107,7 +107,8 @@ namespace Godot.Sharp.Extras
 
 			try {
 				member.SetValue(node, Convert.ChangeType(res, member.MemberType));
-			} catch (Exception ex) {
+			} catch (Exception)
+			{
 				throw new Exception($"Failed to set variable {member.Name} with the {member.MemberType} for {resourcePath}.");
 			}
 		}
