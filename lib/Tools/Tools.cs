@@ -134,8 +134,8 @@ namespace Godot.Sharp.Extras
 			List<string> names = new List<string>()
 			{
 				name.Empty() ? name : $"/root/{name}",
-				$"/root/{member.MemberType.Name}",
-				$"/root/{member.Name}"
+				$"/root/{member.Name}",
+				$"/root/{member.MemberType.Name}"
 			};
 
 			Node value = TryGetNode(node, names);
@@ -155,8 +155,8 @@ namespace Godot.Sharp.Extras
 			List<string> names = new List<string>()
 			{
 				path.ToString(),
-				member.MemberType.Name,
-				member.Name
+				member.Name,
+				member.MemberType.Name
 			};
 			Node value = TryGetNode(node, names);
 
