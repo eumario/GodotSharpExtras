@@ -12,6 +12,7 @@ namespace Godot.Sharp.Extras {
 		/// <param name="object"></param>
 		/// <returns>SignalAwaiter</returns>
 		public static SignalAwaiter IdleFrame(this Node @object) => @object.ToSignal(Engine.GetMainLoop(), "idle_frame");
+		
 		/// <summary>
 		/// Creates a Waiter for the Engine to complete a Frame, before progressing to the next one.  Must use await to hold progression.
 		/// *Note* This is the same as IdleFrame, just a convenience alias name.
