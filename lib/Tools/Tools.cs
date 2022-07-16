@@ -79,6 +79,12 @@ namespace Godot.Sharp.Extras
 
 				sender = member?.GetValue(node) as Node
 					?? throw new Exception($"SignalHandlerAttribute on '{node.GetType().FullName}.{methodName}', '{attr.TargetNodeField}' is a nonexistant field or property.");
+			} else {
+				sender = node;
+			}
+
+			if (sender == null) {
+				throw new Exception($"SignalHandlerAttribute on '{node.GetType().FullName}.{methodName}', '{attr.TargetNodeField}' is a null value, or property, unable to get.");
 			}
 
 			if (!sender.IsConnected(signal, node, methodName))
