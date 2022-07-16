@@ -156,6 +156,7 @@ namespace Godot.Sharp.Extras
 			{
 				path.ToString(),
 				member.Name,
+				$"%{member.Name}",
 				member.MemberType.Name
 			};
 			Node value = TryGetNode(node, names);
