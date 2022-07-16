@@ -48,6 +48,29 @@ public class MyNode : Container {
 }
 ```
 
+With the release of Godot 3.5 (available in RC releases, and soon Stable Releases), NodePath can now more efficently find nodes in the Scene Tree.  Two additonal options can
+be used with NodePath, the first being that when No path is specified, it will attempt to find the node by using the Variable name, the Variable name with the '%' unqiue name
+and finally by the Type name.  For example:
+
+### Scene Tree:
+![SceneTree Example](images/nodepath_example.png)
+
+### Code:
+```cs
+using Godot;
+using Godot.Sharp.Extras;
+
+public class MyNode : Control {
+    [NodePath] Control MySpecialControl = null;
+    [NodePath] Control MyNestedControl = null;
+    [NodePath] Timer Countdown = null;
+
+    public override void _Ready() {
+      this.OnReady();
+    }
+}
+```
+
 ## ResolveNode
 ResolveNode allows an exported variable to the editor, to receive a NodePath, that can still be resolved to an actual node used within the C# code, as a reference to the node in the same way that NodePath is used.  The difference is, the NodePath is an Assignment from the Editor, or code, instead of it being a string path to the node itself.
 
@@ -67,6 +90,68 @@ public class MyNode : Node2D {
     this.OnReady();
     
     PlayerSprite.Location = new Vector2(120,120);
+  }
+}
+```
+
+## Resource
+Resource attribute, added in 0.3.4 allows you to do the same thing as preload(), allowing you to load up your resources into variables, making it easer to reference
+what are resources, and what are nodes.
+
+Example:
+```cs
+using Godot;
+using Godot.Sharp.Extras;
+
+public class MyNode : Node2D {
+  [NodePath] Sprite MySprite = null;
+  [Resource("res://Assets/Player/Sprite.png")] StreamTexture SpriteTexture = null;
+  [Resource("res://Scenes/Bullets/Fireball.tscn")] PackedScene Fireball = null;
+
+  public override void _Ready() {
+    this.OnReady();
+    MySprite.Texture = SpriteTexture;
+  }
+
+  public override void _Input(InputEvent event) {
+    if (event.IsActionJustPressed("fire")) {
+      var fireball = Fireball.Instance<Fireball>();
+      fireball.Position = MySprite.Position;
+      fireball.Fire();
+    }
+  }
+}
+```
+
+## Singleton
+Singletons, or AutoLoads as they are referenced in Godot, are now easily accessable in C# through two different ways.  The first is with the Singleton Attribute,
+allowing you to declare a singleton at the top of your script, for easy access.  The other, is with the static generic method Singleton.Get<T>();
+
+Example 1: Singleton Attribute
+```cs
+using Godot;
+using Godot.Sharp.Extras;
+
+public class MyNode : Node2D {
+  [Singleton] SceneManager SceneManager;
+
+  public override void _Ready() {
+    this.OnReady();
+
+    GD.Print(SceneManager.GetCurrentSceneName());
+  }
+}
+
+Example 2: C# Method of Singleton Pattern
+```cs
+using Godot;
+using Godot.Sharp.Extras;
+
+public class SceneManager : Node {
+  public static SceneManager Instance { get => Singleton.Get<SceneManager>(); }
+
+  public string GetCurrentSceneName() {
+    return "Current Scene";
   }
 }
 ```
@@ -143,6 +228,35 @@ public class MyPanel : Panel
   [SignalHandler("pressed", nameof(_button2))]
   void OnButtonPressed() {
     GD.Print("A button has been pressed.");
+  }
+}
+```
+
+## Fluent Signals
+Added in 3.1, Fluent Signals now allow for easy chaining of signal connect methods, in the form of a sentance.  An example of this in action:
+
+```cs
+using Godot;
+using Godot.Sharp.Extras;
+using Godot.Sharp.Extras.Fluent;
+
+public class MyPanel : Panel
+{
+  [NodePath] Button MyTestButton = null;
+  ConnectedBinding ButtonSignalHandler = null;
+  
+  public override void _Ready() {
+    this.OnReady();
+
+    ButtonSignalHandler = MyTestButton.Connect("pressed")
+          .WithBinds("Optional Params", MyTestButton, this)
+          .WithFlags(ConnectFlags.Deferred,ConnectFlags.ReferenceCounted)
+          .To(this,"OnButtonPressed");
+  }
+
+  public OnButtonPressed(string Param, Button theButton, Control parent) {
+    // process stuff
+    ButtonSignalHandler.Disconnect();
   }
 }
 ```
