@@ -56,6 +56,11 @@ namespace Godot.Sharp.Extras.Fluent {
 				_method = method;
 			}
 
+			public bool IsConnected()
+			{
+				return _source != null && _signal != null && _target != null && _method != null;
+			}
+
 			public void Disconnect()
 			{
 				_source.Disconnect(_signal, _target, _method);

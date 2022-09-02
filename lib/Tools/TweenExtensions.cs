@@ -9,9 +9,17 @@ namespace Godot.Sharp.Extras {
 		/// <summary>
 		/// Awaits for the Signal tween_completed before continuing execution.  Must use await to hold progression.
 		/// </summary>
-		/// <param name="tween"></param>
+		/// <param name="tween">Tween</param>
 		/// <returns>SignalAwaiter</returns>
 		public static SignalAwaiter IsCompleted(this Tween @tween) => @tween.ToSignal(@tween, "tween_completed");
+
+		/// <summary>
+		/// Awaits for the Signal finished before continuing execution.  Must use await to hold progression.
+		/// </summary>
+		/// <param name="tween">SceneTreeTween</param>
+		/// <returns>SignalAwaiter</returns>
+		public static SignalAwaiter IsFinished(this SceneTreeTween @tween) =>
+			@tween.ToSignal(@tween, "finished");
 
 		/// <summary>
 		/// Awaits for the Signal tween_all_completed before continuing execution.  Must use await to hold progression.
@@ -25,7 +33,7 @@ namespace Godot.Sharp.Extras {
 		/// </summary>
 		/// <param name="tween"></param>
 		/// <param name="interpolatedObject"></param>
-		/// <returns>SignalAwaiter</returns>
+		/// <returns>Task</returns>
 		public static async Task IsCompleted(this Tween @tween, Object interpolatedObject) {
 			object[] result;
 			do {
