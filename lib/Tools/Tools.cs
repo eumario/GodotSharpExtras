@@ -20,14 +20,13 @@ namespace Godot.Sharp.Extras
 		{
 			var type = node.GetType();
 
-			if (typeMembers.TryGetValue(type, out var members) == false)
+			if (TypeMembers.TryGetValue(type, out var members) == false)
 			{
-				var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 				var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 				members = type.GetFields(bindingFlags).Select(fi => new MemberInfo(fi))
 							.Concat(type.GetProperties(bindingFlags).Select(pi => new MemberInfo(pi)))
 							.ToArray();
-				typeMembers[type] = members;
+				TypeMembers[type] = members;
 			}
 
 			foreach (var member in members)
@@ -52,7 +51,7 @@ namespace Godot.Sharp.Extras
 				}
 			}
 
-			if (signalHandlers.TryGetValue(type, out var handlers) == false)
+			if (SignalHandlers.TryGetValue(type, out var handlers) == false)
 			{
 				handlers = type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
 							.SelectMany(mi => mi.GetCustomAttributes()
@@ -60,7 +59,7 @@ namespace Godot.Sharp.Extras
 								.Select(attr => new SignalHandlerInfo(mi.Name, attr))
 							)
 							.ToArray();
-				signalHandlers[type] = handlers;
+				SignalHandlers[type] = handlers;
 			}
 
 			foreach (var handler in handlers)
@@ -75,11 +74,11 @@ namespace Godot.Sharp.Extras
 
 			if (!string.IsNullOrEmpty(attr.TargetNodeField))
 			{
-				MemberInfo[] members = typeMembers[node.GetType()];
+				MemberInfo[] members = TypeMembers[node.GetType()];
 				MemberInfo? member = members.FirstOrDefault(mi => mi.Name == attr.TargetNodeField);
 
 				sender = member?.GetValue(node) as Node
-					?? throw new Exception($"SignalHandlerAttribute on '{node.GetType().FullName}.{methodName}', '{attr.TargetNodeField}' is a nonexistant field or property.");
+					?? throw new Exception($"SignalHandlerAttribute on '{node.GetType().FullName}.{methodName}', '{attr.TargetNodeField}' is a nonexistent field or property.");
 			} else {
 				sender = node;
 			}
@@ -100,7 +99,7 @@ namespace Godot.Sharp.Extras
 						? new MemberInfo(fi)
 						: type.GetProperty(targetFieldName) is PropertyInfo pi
 						? new MemberInfo(pi)
-						: throw new Exception($"ResolveNodeAttribute on {type.FullName}.{member.Name} targets nonexistant field or property {targetFieldName}");
+						: throw new Exception($"ResolveNodeAttribute on {type.FullName}.{member.Name} targets nonexistent field or property {targetFieldName}");
 			
 			NodePath path = targetMember.GetValue(node) as NodePath
 					?? throw new Exception($"ResolveNodeAttribute on {type.FullName}.{member.Name} targets property {targetFieldName} which is not a NodePath");
@@ -129,10 +128,12 @@ namespace Godot.Sharp.Extras
 		}
 
 		private static Node TryGetNode(Node node, List<string> names) {
-			foreach(string name in names) {
+			foreach(var name in names) {
 				if (name.Empty()) continue;
 				if (node.HasNode(name))
 					return node.GetNode(name);
+				if (node.Owner.HasNode(name))
+					return node.Owner.GetNode(name);
 			}
 			return null;
 		}
@@ -144,6 +145,9 @@ namespace Godot.Sharp.Extras
 				$"/root/{member.Name}",
 				$"/root/{member.MemberType.Name}"
 			};
+
+			if (names.Contains(""))
+				names.Remove("");
 
 			Node value = TryGetNode(node, names);
 
@@ -166,6 +170,10 @@ namespace Godot.Sharp.Extras
 				$"%{member.Name}",
 				member.MemberType.Name
 			};
+			
+			if (names.Contains(""))
+				names.Remove("");
+			
 			Node value = TryGetNode(node, names);
 
 			if (value == null)
@@ -180,7 +188,7 @@ namespace Godot.Sharp.Extras
 			}
 		}
 
-		readonly struct MemberInfo
+		private readonly struct MemberInfo
 		{
 			public string Name { get; }
 			public Type MemberType { get; }
@@ -207,7 +215,7 @@ namespace Godot.Sharp.Extras
 			}
 		}
 
-		readonly struct SignalHandlerInfo
+		private readonly struct SignalHandlerInfo
 		{
 			public string MethodName { get; }
 			public SignalHandlerAttribute Attribute { get; }
@@ -216,17 +224,8 @@ namespace Godot.Sharp.Extras
 				(MethodName, Attribute) = (methodName, attr);
 		}
 
-		readonly struct ResourceInfo
-		{
-			public string MemberName { get; }
-			public ResourceAttribute Attribute { get; }
-			
-			public ResourceInfo(string memberName, ResourceAttribute attr) =>
-				(MemberName, Attribute) = (memberName, attr);
-		}
-
-		readonly private static Dictionary<Type, MemberInfo[]> typeMembers = new Dictionary<Type, MemberInfo[]>();
-		readonly private static Dictionary<Type, SignalHandlerInfo[]> signalHandlers = new Dictionary<Type, SignalHandlerInfo[]>();
+		private static readonly Dictionary<Type, MemberInfo[]> TypeMembers = new Dictionary<Type, MemberInfo[]>();
+		private static readonly Dictionary<Type, SignalHandlerInfo[]> SignalHandlers = new Dictionary<Type, SignalHandlerInfo[]>();
 
 	}
 }
