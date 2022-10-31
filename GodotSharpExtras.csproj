@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>0.3.4</Version>
     <!-- Nuget Tags -->
@@ -14,6 +13,7 @@
     <PackageProjectUrl>https://github.com/eumario/GodotSharpExtras</PackageProjectUrl>
     <Copyright>Copyright (c) 2021 Mario Steele</Copyright>
     <PackageReleaseNotes>Needs Godot 3.5 Release Candidate 6 or later. For earlier versions, please use 0.3.1 or 0.2.3.</PackageReleaseNotes>
+    <TargetFrameworks>net472;netstandard2.0;netstandard2.1</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
