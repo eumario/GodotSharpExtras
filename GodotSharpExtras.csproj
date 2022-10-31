@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.3.4</Version>
+    <Version>0.3.5.1</Version>
     <!-- Nuget Tags -->
     <AssemblyTitle>Godot Sharp Extras</AssemblyTitle>
     <Description>A set of tools to allow easier interfacing with Godot.</Description>
@@ -12,7 +12,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/eumario/GodotSharpExtras</PackageProjectUrl>
     <Copyright>Copyright (c) 2021 Mario Steele</Copyright>
-    <PackageReleaseNotes>Needs Godot 3.5 Release Candidate 6 or later. For earlier versions, please use 0.3.1 or 0.2.3.</PackageReleaseNotes>
+    <PackageReleaseNotes>Needs Godot 3.5.1 or later. For earlier versions, please use 0.3.1 or 0.2.3.</PackageReleaseNotes>
     <TargetFrameworks>net472;netstandard2.0;netstandard2.1</TargetFrameworks>
   </PropertyGroup>
 
