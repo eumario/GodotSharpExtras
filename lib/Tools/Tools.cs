@@ -23,6 +23,7 @@ namespace Godot.Sharp.Extras
 			if (typeMembers.TryGetValue(type, out var members) == false)
 			{
 				var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+				var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 				members = type.GetFields(bindingFlags).Select(fi => new MemberInfo(fi))
 							.Concat(type.GetProperties(bindingFlags).Select(pi => new MemberInfo(pi)))
 							.ToArray();
