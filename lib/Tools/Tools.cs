@@ -132,8 +132,9 @@ namespace Godot.Sharp.Extras
 				if (name.Empty()) continue;
 				if (node.HasNode(name))
 					return node.GetNode(name);
-				if (node.Owner.HasNode(name))
-					return node.Owner.GetNode(name);
+				if (node.Owner != null)
+					if (node.Owner.HasNode(name))
+						return node.Owner.GetNode(name);
 			}
 			return null;
 		}
