@@ -155,7 +155,7 @@ public class SceneManager : Node {
         _instance = Singleton.Get<SceneManager>();
       return _instance;
     }
-   }
+  }
 
   public string GetCurrentSceneName() {
     return "Current Scene";
