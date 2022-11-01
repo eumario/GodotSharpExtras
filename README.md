@@ -148,7 +148,14 @@ using Godot;
 using Godot.Sharp.Extras;
 
 public class SceneManager : Node {
-  public static SceneManager Instance { get => Singleton.Get<SceneManager>(); }
+  private static SceneManager _instance = null;
+  public static SceneManager Instance {
+    get {
+      if (_instance == null)
+        _instance = Singleton.Get<SceneManager>();
+      return _instance;
+    }
+   }
 
   public string GetCurrentSceneName() {
     return "Current Scene";
