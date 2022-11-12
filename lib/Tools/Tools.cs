@@ -87,9 +87,9 @@ namespace Godot.Sharp.Extras
 				throw new Exception($"SignalHandlerAttribute on '{node.GetType().FullName}.{methodName}', '{attr.TargetNodeField}' is a null value, or property, unable to get.");
 			}
 
-			if (!sender.IsConnected(signal, node, methodName))
+			if (!sender.IsConnected(signal, new Callable(node, methodName)))
 			{
-				sender.Connect(signal, node, methodName);
+				sender.Connect(signal, new Callable(node, methodName));
 			}
 		}
 
@@ -129,7 +129,7 @@ namespace Godot.Sharp.Extras
 
 		private static Node TryGetNode(Node node, List<string> names) {
 			foreach(var name in names) {
-				if (name.Empty()) continue;
+				if (string.IsNullOrEmpty(name)) continue;
 				if (node.HasNode(name))
 					return node.GetNode(name);
 				if (node.Owner != null)
@@ -142,7 +142,7 @@ namespace Godot.Sharp.Extras
 		private static void LoadSingleton(Node node, MemberInfo member, string name) {
 			List<string> names = new List<string>()
 			{
-				name.Empty() ? name : $"/root/{name}",
+				string.IsNullOrEmpty(name) ? name : $"/root/{name}",
 				$"/root/{member.Name}",
 				$"/root/{member.MemberType.Name}"
 			};

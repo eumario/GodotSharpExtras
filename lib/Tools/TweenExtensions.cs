@@ -18,7 +18,7 @@ namespace Godot.Sharp.Extras {
 		/// </summary>
 		/// <param name="tween">SceneTreeTween</param>
 		/// <returns>SignalAwaiter</returns>
-		public static SignalAwaiter IsFinished(this SceneTreeTween @tween) =>
+		public static SignalAwaiter IsFinished(this Tween @tween) =>
 			@tween.ToSignal(@tween, "finished");
 
 		/// <summary>
@@ -34,11 +34,11 @@ namespace Godot.Sharp.Extras {
 		/// <param name="tween"></param>
 		/// <param name="interpolatedObject"></param>
 		/// <returns>Task</returns>
-		public static async Task IsCompleted(this Tween @tween, Object interpolatedObject) {
-			object[] result;
+		public static async Task IsCompleted(this Tween @tween, Godot.Variant interpolatedObject) {
+			Godot.Variant[] result;
 			do {
 				result = await tween.IsCompleted();
-			} while (!(result.Length == 2 && result[0] == interpolatedObject));
+			} while (!(result.Length == 2 && result[0].Equals(interpolatedObject)));
 		}
 	}
 }
