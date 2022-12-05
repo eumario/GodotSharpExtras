@@ -139,11 +139,21 @@ namespace Godot.Sharp.Extras
 			return null;
 		}
 
-		private static void LoadSingleton(Node node, MemberInfo member, string name) {
+		private static void LoadSingleton(Node node, MemberInfo member, string name)
+		{
+			var name1 = member.Name;
+			if (!name1.StartsWith("_"))
+				name1 = string.Empty;
+			else
+			{
+				name1 = member.Name.Replace("_", string.Empty);
+				name1 = char.ToUpperInvariant(name1[0]) + name.Substring(1);
+			}
 			List<string> names = new List<string>()
 			{
 				string.IsNullOrEmpty(name) ? name : $"/root/{name}",
 				$"/root/{member.Name}",
+				string.IsNullOrEmpty(name1) ? name1 : $"/root/{name1}",
 				$"/root/{member.MemberType.Name}"
 			};
 
@@ -164,11 +174,21 @@ namespace Godot.Sharp.Extras
 
 		private static void AssignPathToMember(Node node, MemberInfo member, NodePath path)
 		{
+			var name1 = member.Name;
+			if (!name1.StartsWith("_"))
+				name1 = string.Empty;
+			else
+			{
+				name1 = member.Name.Replace("_", string.Empty);
+				name1 = char.ToUpperInvariant(name1[0]) + name1.Substring(1);
+			}
 			List<string> names = new List<string>()
 			{
 				path.ToString(),
 				member.Name,
 				$"%{member.Name}",
+				name1,
+				$"%{name1}",
 				member.MemberType.Name
 			};
 			
