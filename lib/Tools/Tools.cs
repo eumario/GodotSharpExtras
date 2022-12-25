@@ -127,14 +127,17 @@ namespace Godot.Sharp.Extras
 			}
 		}
 
-		private static Node TryGetNode(Node node, List<string> names) {
+		private static Node TryGetNode(Node node, List<string> names)
+		{
 			foreach(var name in names) {
 				if (string.IsNullOrEmpty(name)) continue;
-				if (node.HasNode(name))
-					return node.GetNode(name);
-				if (node.Owner != null)
-					if (node.Owner.HasNode(name))
-						return node.Owner.GetNode(name);
+				var target = node.GetNodeOrNull(name);
+				if (target != null)
+					return target;
+				if (node.Owner == null) continue;
+				target = node.Owner.GetNodeOrNull(name);
+				if (target != null)
+					return target;
 			}
 			return null;
 		}
@@ -158,7 +161,7 @@ namespace Godot.Sharp.Extras
 			};
 
 			if (names.Contains(""))
-				names.Remove("");
+				names.RemoveAll(string.IsNullOrEmpty);
 
 			Node value = TryGetNode(node, names);
 
@@ -188,13 +191,13 @@ namespace Godot.Sharp.Extras
 				member.Name,
 				$"%{member.Name}",
 				name1,
-				$"%{name1}",
+				string.IsNullOrEmpty(name1) ? "" : $"%{name1}",
 				member.MemberType.Name
 			};
-			
+
 			if (names.Contains(""))
-				names.Remove("");
-			
+				names.RemoveAll(string.IsNullOrEmpty);
+
 			Node value = TryGetNode(node, names);
 
 			if (value == null)
