@@ -240,13 +240,13 @@ public class MyPanel : Panel
 ```
 
 ## Math Functions
-int.InRange(min,max)
-float.InRange(min,max)
-double.InRange(min,max)
-Vector2.InRange(min,max)
-Vector2I.InRange(min,max)
-Vector3.InRange(min,max)
-Vector3I.InRange(min,max)
+### int.InRange(min,max)
+### float.InRange(min,max)
+### double.InRange(min,max)
+### Vector2.InRange(min,max)
+### Vector2I.InRange(min,max)
+### Vector3.InRange(min,max)
+### Vector3I.InRange(min,max)
 
 These functions allow you to determine if a value is within the specified Range of a mininum value, and a maximum value.
 
