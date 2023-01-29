@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.4.0-beta.10</Version>
+    <Version>0.4.0-beta.16</Version>
     
     <!-- Nuget Tags -->
     <AssemblyTitle>Godot Sharp Extras</AssemblyTitle>
@@ -18,8 +18,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GodotSharp" Version="4.0.0-beta.10" />
-    <PackageReference Include="GodotSharpEditor" Version="4.0.0-beta.10" />
+    <PackageReference Include="GodotSharp" Version="4.0.0-beta.16" />
+    <PackageReference Include="GodotSharpEditor" Version="4.0.0-beta.16" />
   </ItemGroup>
 
 </Project>

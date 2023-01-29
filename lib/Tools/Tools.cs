@@ -149,8 +149,9 @@ namespace Godot.Sharp.Extras
 				name1 = string.Empty;
 			else
 			{
-				name1 = member.Name.Replace("_", string.Empty);
-				name1 = char.ToUpperInvariant(name1[0]) + name.Substring(1);
+				name1 = char.ToUpperInvariant(member.Name[1]) + member.Name[2..];
+				// name1 = member.Name.Replace("_", string.Empty);
+				// name1 = char.ToUpperInvariant(name1[0]) + name[1..];
 			}
 			List<string> names = new List<string>()
 			{
@@ -182,8 +183,9 @@ namespace Godot.Sharp.Extras
 				name1 = string.Empty;
 			else
 			{
-				name1 = member.Name.Replace("_", string.Empty);
-				name1 = char.ToUpperInvariant(name1[0]) + name1.Substring(1);
+				name1 = char.ToUpperInvariant(member.Name[1]) + member.Name[2..];
+				// name1 = member.Name.Replace("_", string.Empty);
+				// name1 = char.ToUpperInvariant(name1[0]) + name1.Substring(1);
 			}
 			List<string> names = new List<string>()
 			{

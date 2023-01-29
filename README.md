@@ -268,6 +268,29 @@ public class MyPanel : Panel
 }
 ```
 
+## Math Functions
+int.InRange(min,max)
+float.InRange(min,max)
+double.InRange(min,max)
+Vector2.InRange(min,max)
+Vector2I.InRange(min,max)
+Vector3.InRange(min,max)
+Vector3I.InRange(min,max)
+
+These functions allow you to determine if a value is within the specified Range of a mininum value, and a maximum value.
+
+```cs
+public void ProcShield(Vector2 position) {
+  var distance = position.DistanceTo(Position);
+  if (distance.InRange(0.25f, 0.75f))
+  {
+    GetNode("shield").Visible = true;
+  } else {
+    GetNode("shield").Visible = false;
+  }
+}
+```
+
 ## Caveats
 When compiling using NodePath, and ResolveNode, the compiler will give a warning about a variable associated with these two attributes, will never be assigned to, or have a value.  This is because the compiler doesn't recognize that we are using the Extension Method OnReady() to actually assign values to these variables, the way to surpress this warning, is simply to assign null to the value of the variable, to surpress this warning.
 
