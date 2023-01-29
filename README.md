@@ -53,7 +53,7 @@ be used with NodePath, the first being that when No path is specified, it will a
 and finally by the Type name.  For example:
 
 ### Scene Tree:
-![SceneTree Example](https://github.com/eumario/GodotSharpExtras/raw/master/images/nodepath_example.png)
+![SceneTree Example](https://raw.githubusercontent.com/eumario/GodotSharpExtras/dotnet6/images/nodepath_example.png)
 
 ### Code:
 ```cs
