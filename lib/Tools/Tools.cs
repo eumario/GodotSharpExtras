@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Godot;
@@ -8,6 +9,7 @@ namespace Godot.Sharp.Extras
 {
 	public static class Tools
 	{
+		private static TextInfo _textInfo = new CultureInfo("en-us", false).TextInfo;
 		/// <summary>
 		/// Processes all Attributes for NodePaths.
 		/// </summary>
@@ -187,6 +189,7 @@ namespace Godot.Sharp.Extras
 				// name1 = member.Name.Replace("_", string.Empty);
 				// name1 = char.ToUpperInvariant(name1[0]) + name1.Substring(1);
 			}
+
 			List<string> names = new List<string>()
 			{
 				path.ToString(),
