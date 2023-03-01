@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.4.0-beta.16</Version>
+    <Version>0.4.0</Version>
     
     <!-- Nuget Tags -->
     <AssemblyTitle>Godot Sharp Extras</AssemblyTitle>
@@ -14,12 +14,12 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/eumario/GodotSharpExtras</PackageProjectUrl>
     <Copyright>Copyright (c) 2021 Mario Steele</Copyright>
-    <PackageReleaseNotes>For Godot 4.0 Beta 10 or later. For earlier versions, please use 0.3.5.1.</PackageReleaseNotes>
+    <PackageReleaseNotes>For Godot 4.0. For 3.5 LTS versions, please use 0.3.5.1.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GodotSharp" Version="4.0.0-beta.16" />
-    <PackageReference Include="GodotSharpEditor" Version="4.0.0-beta.16" />
+    <PackageReference Include="GodotSharp" Version="4.0.0" />
+    <PackageReference Include="GodotSharpEditor" Version="4.0.0" />
   </ItemGroup>
 
 </Project>
