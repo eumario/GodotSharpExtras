@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.3.6</Version>
+    <Version>0.4.0</Version>
+    
     <!-- Nuget Tags -->
     <AssemblyTitle>Godot Sharp Extras</AssemblyTitle>
     <Description>A set of tools to allow easier interfacing with Godot.</Description>
@@ -12,19 +14,12 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/eumario/GodotSharpExtras</PackageProjectUrl>
     <Copyright>Copyright (c) 2021 Mario Steele</Copyright>
-    <PackageReleaseNotes>Needs Godot 3.5.1 or later. For earlier versions, please use 0.3.1 or 0.2.3.</PackageReleaseNotes>
-    <TargetFrameworks>net472;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <PackageReleaseNotes>For Godot 4.0. For 3.5 LTS versions, please use 0.3.5.1.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="GodotSharp">
-      <HintPath>$(ProjectDir)\.mono\assemblies\Debug\GodotSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="GodotSharpEditor">
-      <HintPath>$(ProjectDir)\.mono\assemblies\Debug\GodotSharpEditor.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <PackageReference Include="GodotSharp" Version="4.0.0" />
+    <PackageReference Include="GodotSharpEditor" Version="4.0.0" />
   </ItemGroup>
 
 </Project>

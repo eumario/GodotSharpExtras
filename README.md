@@ -9,7 +9,7 @@ dotnet add package GodotSharpExtras
 ```
 
 # Compilation
-In order to compile a custom version of this project, you will need the GodotSharp libraries from an existing Project which can be found under ```.mono``` folder.  In order to make it easier to build, simply copy the .mono folder from one of your projects, directly into the root of this folder, and then run the following command:
+With Godot 4.0, you no longer need to copy over the DLL files from an Existing Godot C# Project.  The assemblies needed to interface with Godot are now published on Nuget.  To build this library, simply execute:
 
 ```
 dotnet build
@@ -36,9 +36,9 @@ Example:
 using Godot;
 using Godot.Sharp.Extras;
 
-public class MyNode : Container {
+public partial class MyNode : Container {
     [NodePath("Container/Label")]
-    Label MyLabel;
+    private Label _myLabel;
     
     public override void _Ready() {
       this.OnReady();
@@ -53,15 +53,15 @@ be used with NodePath, the first being that when No path is specified, it will a
 and finally by the Type name.  For example:
 
 ### Scene Tree:
-![SceneTree Example](images/nodepath_example.png)
+![SceneTree Example](https://raw.githubusercontent.com/eumario/GodotSharpExtras/dotnet6/images/nodepath_example.png)
 
 ### Code:
 ```cs
 using Godot;
 using Godot.Sharp.Extras;
 
-public class MyNode : Control {
-    [NodePath] Control MySpecialControl = null;
+public partial class MyNode : Control {
+    [NodePath] Control _mySpecialControl = null;
     [NodePath] Control MyNestedControl = null;
     [NodePath] Timer Countdown = null;
 
@@ -79,12 +79,12 @@ Example:
 using Godot;
 using Godot.Sharp.Extras;
 
-public class MyNode : Node2D {
+public partial class MyNode : Node2D {
   [Export]
   public string SpritePath;
   
   [ResolveNode(nameof(SpritePath))]
-  Sprite PlayerSprite;
+  Sprite2D PlayerSprite;
   
   public override void _Ready() {
     this.OnReady();
@@ -104,7 +104,7 @@ using Godot;
 using Godot.Sharp.Extras;
 
 public class MyNode : Node2D {
-  [NodePath] Sprite MySprite = null;
+  [NodePath] Sprite2D MySprite = null;
   [Resource("res://Assets/Player/Sprite.png")] StreamTexture SpriteTexture = null;
   [Resource("res://Scenes/Bullets/Fireball.tscn")] PackedScene Fireball = null;
 
@@ -239,31 +239,25 @@ public class MyPanel : Panel
 }
 ```
 
-## Fluent Signals
-Added in 3.1, Fluent Signals now allow for easy chaining of signal connect methods, in the form of a sentance.  An example of this in action:
+## Math Functions
+### int.InRange(min,max)
+### float.InRange(min,max)
+### double.InRange(min,max)
+### Vector2.InRange(min,max)
+### Vector2I.InRange(min,max)
+### Vector3.InRange(min,max)
+### Vector3I.InRange(min,max)
+
+These functions allow you to determine if a value is within the specified Range of a mininum value, and a maximum value.
 
 ```cs
-using Godot;
-using Godot.Sharp.Extras;
-using Godot.Sharp.Extras.Fluent;
-
-public class MyPanel : Panel
-{
-  [NodePath] Button MyTestButton = null;
-  ConnectedBinding ButtonSignalHandler = null;
-  
-  public override void _Ready() {
-    this.OnReady();
-
-    ButtonSignalHandler = MyTestButton.Connect("pressed")
-          .WithBinds("Optional Params", MyTestButton, this)
-          .WithFlags(ConnectFlags.Deferred,ConnectFlags.ReferenceCounted)
-          .To(this,"OnButtonPressed");
-  }
-
-  public OnButtonPressed(string Param, Button theButton, Control parent) {
-    // process stuff
-    ButtonSignalHandler.Disconnect();
+public void ProcShield(Vector2 position) {
+  var distance = position.DistanceTo(Position);
+  if (distance.InRange(0.25f, 0.75f))
+  {
+    GetNode("shield").Visible = true;
+  } else {
+    GetNode("shield").Visible = false;
   }
 }
 ```

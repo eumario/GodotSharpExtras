@@ -89,9 +89,9 @@ namespace Godot.Sharp.Extras
 				throw new Exception($"SignalHandlerAttribute on '{node.GetType().FullName}.{methodName}', '{attr.TargetNodeField}' is a null value, or property, unable to get.");
 			}
 
-			if (!sender.IsConnected(signal, node, methodName))
+			if (!sender.IsConnected(signal, new Callable(node, methodName)))
 			{
-				sender.Connect(signal, node, methodName);
+				sender.Connect(signal, new Callable(node, methodName));
 			}
 		}
 
@@ -129,14 +129,17 @@ namespace Godot.Sharp.Extras
 			}
 		}
 
-		private static Node TryGetNode(Node node, List<string> names) {
+		private static Node TryGetNode(Node node, List<string> names)
+		{
 			foreach(var name in names) {
-				if (name.Empty()) continue;
-				if (node.HasNode(name))
-					return node.GetNode(name);
-				if (node.Owner != null)
-					if (node.Owner.HasNode(name))
-						return node.Owner.GetNode(name);
+				if (string.IsNullOrEmpty(name)) continue;
+				var target = node.GetNodeOrNull(name);
+				if (target != null)
+					return target;
+				if (node.Owner == null) continue;
+				target = node.Owner.GetNodeOrNull(name);
+				if (target != null)
+					return target;
 			}
 			return null;
 		}
@@ -145,22 +148,23 @@ namespace Godot.Sharp.Extras
 		{
 			var name1 = member.Name;
 			if (!name1.StartsWith("_"))
-				name1 = "";
+				name1 = string.Empty;
 			else
 			{
-				name1 = member.Name.Replace("_", string.Empty);
-				name1 = char.ToUpperInvariant(name1[0]) + name.Substring(1);
+				name1 = char.ToUpperInvariant(member.Name[1]) + member.Name[2..];
+				// name1 = member.Name.Replace("_", string.Empty);
+				// name1 = char.ToUpperInvariant(name1[0]) + name[1..];
 			}
 			List<string> names = new List<string>()
 			{
-				name.Empty() ? name : $"/root/{name}",
+				string.IsNullOrEmpty(name) ? name : $"/root/{name}",
 				$"/root/{member.Name}",
-				name1.Empty() ? name1 : $"/root/{name1}",
+				string.IsNullOrEmpty(name1) ? name1 : $"/root/{name1}",
 				$"/root/{member.MemberType.Name}"
 			};
 
 			if (names.Contains(""))
-				names.Remove("");
+				names.RemoveAll(string.IsNullOrEmpty);
 
 			Node value = TryGetNode(node, names);
 
@@ -178,11 +182,12 @@ namespace Godot.Sharp.Extras
 		{
 			var name1 = member.Name;
 			if (!name1.StartsWith("_"))
-				name1 = "";
+				name1 = string.Empty;
 			else
 			{
-				name1 = member.Name.Replace("_", string.Empty);
-				name1 = char.ToUpperInvariant(name1[0]) + name1.Substring(1);
+				name1 = char.ToUpperInvariant(member.Name[1]) + member.Name[2..];
+				// name1 = member.Name.Replace("_", string.Empty);
+				// name1 = char.ToUpperInvariant(name1[0]) + name1.Substring(1);
 			}
 
 			List<string> names = new List<string>()
@@ -191,13 +196,13 @@ namespace Godot.Sharp.Extras
 				member.Name,
 				$"%{member.Name}",
 				name1,
-				$"%{name1}",
+				string.IsNullOrEmpty(name1) ? "" : $"%{name1}",
 				member.MemberType.Name
 			};
-			
+
 			if (names.Contains(""))
-				names.Remove("");
-			
+				names.RemoveAll(string.IsNullOrEmpty);
+
 			Node value = TryGetNode(node, names);
 
 			if (value == null)
