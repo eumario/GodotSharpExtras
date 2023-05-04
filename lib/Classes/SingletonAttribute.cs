@@ -8,13 +8,14 @@ namespace Godot.Sharp.Extras;
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public class SingletonAttribute : Attribute
 {
-	public string Name { get; set; }
+    public string Name { get; set; }
 
-	/// <summary>
-	/// Constructs a <see cref="SingletonAttribute"/>
-	/// </summary>
-	/// <param name="path">Optional Name / Path to the Singleton</param>
-	public SingletonAttribute(string path = "") {
-		this.Name = path;
-	}
+    /// <summary>
+    /// Constructs a <see cref="SingletonAttribute"/>
+    /// </summary>
+    /// <param name="path">Optional Name / Path to the Singleton</param>
+    public SingletonAttribute(string path = "")
+    {
+        this.Name = path;
+    }
 }
