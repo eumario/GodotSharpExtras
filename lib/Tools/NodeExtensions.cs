@@ -4,31 +4,29 @@ namespace Godot.Sharp.Extras;
 
 public static class NodeExtensions
 {
-	/// <summary>
-	/// Adds the Node to a group with a name equal to the Node's type name.
-	/// </summary>
-	/// <param name="node"></param>
-	public static void AddToGroup(this Node node) {
+    /// <summary>
+    /// Adds the Node to a group with a name equal to the Node's type name.
+    /// </summary>
+    /// <param name="node"></param>
+    public static void AddToGroup(this Node node) => 
 		node.AddToGroup(node.GetType().Name);
-	}
 
-	/// <summary>
-	/// Get a node by the name of the Type of node.
-	/// </summary>
-	/// <typeparam name="T">Node Type to Get</typeparam>
-	/// <param name="node"></param>
-	/// <returns>Node named the same as Type</returns>
-	public static T GetNode<T>(this Node node) where T : Node {
-		return node.GetNode<T>(typeof(T).Name);
-	}
+    /// <summary>
+    /// Get a node by the name of the Type of node.
+    /// </summary>
+    /// <typeparam name="T">Node Type to Get</typeparam>
+    /// <param name="node"></param>
+    /// <returns>Node named the same as Type</returns>
+    public static T GetNode<T>(this Node node) where T : Node => 
+		node.GetNode<T>(typeof(T).Name);
 
-	/// <summary>
-	/// Returns all children as an Godot.Collections.Array<T>.
-	/// </summary>
-	/// <typeparam name="T">Type of Node</typeparam>
-	/// <param name="node"></param>
-	/// <returns>Godot.Collections.Array<T></returns>
-	public static Array<T> GetChildren<T>(this Node node) where T : Node
+    /// <summary>
+    /// Returns all children as an Godot.Collections.Array<T>.
+    /// </summary>
+    /// <typeparam name="T">Type of Node</typeparam>
+    /// <param name="node"></param>
+    /// <returns>Godot.Collections.Array<T></returns>
+    public static Array<T> GetChildren<T>(this Node node) where T : Node
 	{
 		var children = node.GetChildren().Cast<Node>();
 		return new Array<T>(children.Select(x => x as T).ToArray<T>());

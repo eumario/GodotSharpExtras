@@ -15,7 +15,8 @@ public static class SceneTreeExtensions
 	/// </summary>
 	/// <param name="object"></param>
 	/// <returns>SignalAwaiter</returns>
-	public static SignalAwaiter ProcessFrame(this Node @object) => @object.ToSignal(Engine.GetMainLoop(), "process_frame");
+	public static SignalAwaiter ProcessFrame(this Node @object) => 
+		@object.ToSignal(Engine.GetMainLoop(), "process_frame");
 	
 	/// <summary>
 	/// Creates a Waiter for the Engine to complete a Frame, before progressing to the next one.  Must use await to hold progression.

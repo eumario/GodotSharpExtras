@@ -7,7 +7,8 @@ public static class TweenExtensions
 	/// </summary>
 	/// <param name="tween">Tween</param>
 	/// <returns>SignalAwaiter</returns>
-	public static SignalAwaiter IsCompleted(this Tween @tween) => @tween.ToSignal(@tween, "tween_completed");
+	public static SignalAwaiter IsCompleted(this Tween @tween) => 
+		@tween.ToSignal(@tween, "tween_completed");
 
 	/// <summary>
 	/// Awaits for the Signal finished before continuing execution.  Must use await to hold progression.
@@ -22,7 +23,8 @@ public static class TweenExtensions
 	/// </summary>
 	/// <param name="tween"></param>
 	/// <returns>SignalAwaiter</returns>
-	public static SignalAwaiter AreAllCompleted(this Tween @tween) => @tween.ToSignal(@tween, "tween_all_completed");
+	public static SignalAwaiter AreAllCompleted(this Tween @tween) => 
+		@tween.ToSignal(@tween, "tween_all_completed");
 
 	/// <summary>
 	/// Awaits for all tween_completed signals that are returned, waiting for the specified object to be completed.
