@@ -1,13 +1,16 @@
-using System;
+// Consider moving these global usings to something like Globals.cs
+// or GodotSharpExtras.cs later
+global using System;
+global using System.Linq;
+global using System.Threading.Tasks;
+
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
-using Godot;
 
 namespace Godot.Sharp.Extras
 {
-	public static class Tools
+    public static class Tools
 	{
 		private static TextInfo _textInfo = new CultureInfo("en-us", false).TextInfo;
 		/// <summary>
