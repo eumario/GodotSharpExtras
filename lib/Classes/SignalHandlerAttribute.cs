@@ -1,14 +1,12 @@
-using System;
-
 namespace Godot.Sharp.Extras
 {
-	/// <summary>
-	/// Marks a function as a Event Handler for signals coming from Godot nodes.
-	/// </summary>
-	/// <remarks>
-	/// This is used to make code more readable, and easier to extend, without having to constantly add to the _Ready() function.
-	/// </remarks>
-	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
+    /// <summary>
+    /// Marks a function as a Event Handler for signals coming from Godot nodes.
+    /// </summary>
+    /// <remarks>
+    /// This is used to make code more readable, and easier to extend, without having to constantly add to the _Ready() function.
+    /// </remarks>
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
 	public class SignalHandlerAttribute : Attribute
 	{
 		public string TargetNodeField {

@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Godot.Sharp.Extras {
-	public static class TweenExtensions
+namespace Godot.Sharp.Extras
+{
+    public static class TweenExtensions
 	{
 		/// <summary>
 		/// Awaits for the Signal tween_completed before continuing execution.  Must use await to hold progression.

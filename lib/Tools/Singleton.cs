@@ -1,7 +1,6 @@
-using Godot;
-
-namespace Godot.Sharp.Extras {
-	public static class Singleton {
+namespace Godot.Sharp.Extras
+{
+    public static class Singleton {
 		/// <summary>
 		/// Get's a Singleton/Autoload from the Root of the SceneTree.  Needs to be added to the Godot Editor.
 		/// </summary>

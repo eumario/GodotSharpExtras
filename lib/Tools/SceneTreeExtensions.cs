@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Godot.Sharp.Extras {
-	public static class SceneTreeExtensions
+namespace Godot.Sharp.Extras
+{
+    public static class SceneTreeExtensions
 	{
 		/// <summary>
 		/// Creates a Waiter for the Engine to complete an Process Frame.  Must use await to hold progression.

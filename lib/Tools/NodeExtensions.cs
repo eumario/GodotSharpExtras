@@ -1,9 +1,8 @@
-using Godot;
 using Godot.Collections;
-using System.Linq;
 
-namespace Godot.Sharp.Extras {
-	public static class NodeExtensions
+namespace Godot.Sharp.Extras
+{
+    public static class NodeExtensions
 	{
 		/// <summary>
 		/// Adds the Node to a group with a name equal to the Node's type name.

@@ -1,12 +1,10 @@
-using System;
-using Godot;
+namespace Godot.Sharp.Extras
+{
 
-namespace Godot.Sharp.Extras {
-
-	/// <summary>
-	/// Sets up a Resource to be loaded into variable given.
-	/// </summary>
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    /// <summary>
+    /// Sets up a Resource to be loaded into variable given.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 	public class ResourceAttribute : Attribute
 	{
 		public string ResourcePath { get; set; }

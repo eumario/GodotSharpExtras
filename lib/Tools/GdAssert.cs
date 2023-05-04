@@ -1,9 +1,8 @@
-using System;
 using System.Diagnostics;
-using Godot;
 
-namespace Godot.Sharp.Extras {
-	public static class GdAssert
+namespace Godot.Sharp.Extras
+{
+    public static class GdAssert
 	{
 		/// <summary>
 		/// See <see cref="Assert"/>

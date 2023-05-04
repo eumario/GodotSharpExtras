@@ -1,7 +1,6 @@
-using Godot;
-
-namespace Godot.Sharp.Extras {
-	public static class TimerExtensions
+namespace Godot.Sharp.Extras
+{
+    public static class TimerExtensions
 	{
 
 		/// <summary>
