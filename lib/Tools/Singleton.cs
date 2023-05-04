@@ -18,7 +18,7 @@ public static class Singleton {
 	/// <param name="name">Name used for Singleton/Autoload</param>
 	/// <returns>Instance of the Singleton/Autoload</returns>
 	public static T Get<T>(string name) {
-		if (!name.Contains("/"))
+		if (!name.Contains('/'))
 			name = $"/root/{name}";
 		var node = (Engine.GetMainLoop() as SceneTree).Root.GetNode(name);
 		return (T)System.Convert.ChangeType(node, typeof(T));

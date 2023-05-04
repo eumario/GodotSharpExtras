@@ -12,7 +12,7 @@ namespace Godot.Sharp.Extras;
 
 public static class Tools
 {
-	private static TextInfo _textInfo = new CultureInfo("en-us", false).TextInfo;
+	private static readonly TextInfo _textInfo = new CultureInfo("en-us", false).TextInfo;
 	/// <summary>
 	/// Processes all Attributes for NodePaths.
 	/// </summary>
@@ -158,7 +158,7 @@ public static class Tools
 			// name1 = member.Name.Replace("_", string.Empty);
 			// name1 = char.ToUpperInvariant(name1[0]) + name[1..];
 		}
-		List<string> names = new List<string>()
+		List<string> names = new()
 		{
 			string.IsNullOrEmpty(name) ? name : $"/root/{name}",
 			$"/root/{member.Name}",
@@ -169,12 +169,10 @@ public static class Tools
 		if (names.Contains(""))
 			names.RemoveAll(string.IsNullOrEmpty);
 
-		Node value = TryGetNode(node, names);
-
-		if (value == null) {
+		Node value = TryGetNode(node, names) ?? 
 			throw new Exception($"Failed to load Singleton/Autoload for {member.MemberType.Name}.  Node was not found at /root with the following names: {string.Join(",", names.ToArray())}");
-		}
-		try {
+        try
+        {
 			member.SetValue(node, value);
 		} catch (Exception ex) {
 			throw new Exception($"Failed to load Singleton/Autoload for {member.MemberType.Name}.  Error setting node value for {member.Name}.", ex);
@@ -193,7 +191,7 @@ public static class Tools
 			// name1 = char.ToUpperInvariant(name1[0]) + name1.Substring(1);
 		}
 
-		List<string> names = new List<string>()
+		List<string> names = new()
 		{
 			path.ToString(),
 			member.Name,
@@ -206,12 +204,10 @@ public static class Tools
 		if (names.Contains(""))
 			names.RemoveAll(string.IsNullOrEmpty);
 
-		Node value = TryGetNode(node, names);
-
-		if (value == null)
+		Node value = TryGetNode(node, names) ?? 
 			throw new Exception($"AssignPathToMember on {node.GetType().FullName}.{member.Name} - Unable to find node with the following names: {string.Join(",", names.ToArray())}");
-		try
-		{
+        try
+        {
 			member.SetValue(node,value);
 		}
 		catch (ArgumentException e)
@@ -256,7 +252,7 @@ public static class Tools
 			(MethodName, Attribute) = (methodName, attr);
 	}
 
-	private static readonly Dictionary<Type, MemberInfo[]> TypeMembers = new Dictionary<Type, MemberInfo[]>();
-	private static readonly Dictionary<Type, SignalHandlerInfo[]> SignalHandlers = new Dictionary<Type, SignalHandlerInfo[]>();
+	private static readonly Dictionary<Type, MemberInfo[]> TypeMembers = new();
+	private static readonly Dictionary<Type, SignalHandlerInfo[]> SignalHandlers = new();
 
 }
