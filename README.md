@@ -141,6 +141,7 @@ public class MyNode : Node2D {
     GD.Print(SceneManager.GetCurrentSceneName());
   }
 }
+```
 
 Example 2: C# Method of Singleton Pattern
 ```cs
