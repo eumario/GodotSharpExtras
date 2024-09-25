@@ -69,6 +69,31 @@ namespace Godot.Sharp.Extras
 				ConnectSignalHandler(node, handler.MethodName, handler.Attribute);
 			}
 		}
+		
+		/// <summary>
+		/// Checks to see if all nodes have been assigned to their variables defined by <see cref="NodePathAttribute"/>,
+		/// <see cref="ResolveNodeAttribute"/>, <see cref="ResourceAttribute"/> and <see cref="SingletonAttribute"/>. 
+		/// </summary>
+		/// <param name="node">The Node class we are working with.</param>
+		/// <returns>True if all nodes have loaded, and false if not.</returns>
+		public static bool IsNodesReady<T>(this T node) where T : Node
+		{
+			if (node == null) return false;
+			if (!TypeMembers.ContainsKey(typeof(T))) return false;
+			var members = TypeMembers[typeof(T)];
+			foreach (var member in members)
+			{
+				foreach (var attr in member.CustomAttributes)
+				{
+					if (attr is ResolveNodeAttribute or NodePathAttribute or ResourceAttribute or SingletonAttribute)
+					{
+						var value = member.GetValue(node);
+						return !object.Equals(value, null);
+					}
+				}
+			}
+			return true;
+		}
 
 		private static void ConnectSignalHandler(Node node, string methodName, SignalHandlerAttribute attr) {
 			var signal = attr.SignalName;

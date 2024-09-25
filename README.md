@@ -28,6 +28,66 @@ This will compile the DLL file, as well as create a Nuget package, that you can 
 ## OnReady()
 This function is what wires everything up from the Godot side of things, to the C# Side of things. In order for C# to be able to get the nodes it needs to reference with the proper C# Variables, OnReady() needs to be called.  By the Godot documentation, it isn't recommended to use `this` when calling various functions on the node, but due to the nature in which the system needs to wire things up, it needs a reference to the node that we are running the OnReady() function on to be able to ensure that the variables are properly setup with the values.  This is done through the C#'s Extension Methods.  This allows us to add OnReady() to a node reference, without having to recompile GodotSharp in order to add this method.  See examples for NodePath and ResolveNode on how OnReady() works.
 
+## SceneNode<T>.FromScene()
+When your class Inherits from SceneNode<T>, you can use FromScene() to instantiate a new instance of the Scene, so that everything is properly loaded up, over using the new() functionality.
+
+Example:
+```cs
+using Godot;
+using Godot.Sharp.Extras;
+
+public partial class MyNode : Button
+{
+    private MyDialog _dialog;
+    
+    public override _Ready()
+    {
+        this.OnReady();
+        
+        _dialog = SceneNode<MyDialog>.FromScene();
+        _dialog.CloseRequested += () => {
+            _dialog.Hide();
+            
+        }
+        this.Pressed += () => 
+        {
+            GetTree().Root.AddChild(_dialog);
+            _dialog.Show();
+        }
+    }
+}
+```
+
+## IsNodesReady()
+When using the Attributes ResolveNodePath, NodePath, ResourceAttribute, SingletonAttribute, this checks to see if all defined attributes have been fully loaded, and will return true, or false.  This is useful in using properties, to check and see if the nodes are available to use, when assigning to paths.
+
+Ex:
+```cs
+using Godot;
+using Godot.Sharp.Extras;
+
+public partial class MyNode : Container 
+{
+    [NodePath] private Label _displayHello;
+    
+    private string _helloMessage;
+    
+    public string HelloMessage 
+    {
+        get => _displayHello;
+        set {
+            _helloMessage = value;
+            if (this.IsNodesReady())
+                _displayHello.Text = _helloMessage;
+        }
+    }
+    
+    public override _Ready() {
+        this.OnReady();
+    }
+}
+```
+
 ## NodePath
 NodePath will use a String Path to the Node that you want to access from the Godot side of things, in C#.  It takes care of actually getting the instance when you call the OnReady() function in C#.
 
