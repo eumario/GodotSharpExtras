@@ -72,7 +72,7 @@ namespace Godot.Sharp.Extras
 
 		private static void ConnectSignalHandler(Node node, string methodName, SignalHandlerAttribute attr) {
 			var signal = attr.SignalName;
-			Node sender = null;
+			Node? sender = null;
 
 			if (!string.IsNullOrEmpty(attr.TargetNodeField))
 			{
@@ -129,7 +129,7 @@ namespace Godot.Sharp.Extras
 			}
 		}
 
-		private static Node TryGetNode(Node node, List<string> names)
+		private static Node? TryGetNode(Node node, List<string> names)
 		{
 			foreach(var name in names) {
 				if (string.IsNullOrEmpty(name)) continue;
@@ -166,7 +166,7 @@ namespace Godot.Sharp.Extras
 			if (names.Contains(""))
 				names.RemoveAll(string.IsNullOrEmpty);
 
-			Node value = TryGetNode(node, names);
+			Node? value = TryGetNode(node, names);
 
 			if (value == null) {
 				throw new Exception($"Failed to load Singleton/Autoload for {member.MemberType.Name}.  Node was not found at /root with the following names: {string.Join(",", names.ToArray())}");
@@ -203,7 +203,7 @@ namespace Godot.Sharp.Extras
 			if (names.Contains(""))
 				names.RemoveAll(string.IsNullOrEmpty);
 
-			Node value = TryGetNode(node, names);
+			Node? value = TryGetNode(node, names);
 
 			if (value == null)
 				throw new Exception($"AssignPathToMember on {node.GetType().FullName}.{member.Name} - Unable to find node with the following names: {string.Join(",", names.ToArray())}");
@@ -231,7 +231,7 @@ namespace Godot.Sharp.Extras
 				this.MemberType = pi.PropertyType;
 				this.CustomAttributes = pi.GetCustomAttributes();
 				this.SetValue = pi.SetValue;
-				this.GetValue = pi.GetValue;
+				this.GetValue = pi.GetValue!;
 			}
 
 			public MemberInfo(FieldInfo fi)
@@ -240,7 +240,7 @@ namespace Godot.Sharp.Extras
 				this.MemberType = fi.FieldType;
 				this.CustomAttributes = fi.GetCustomAttributes();
 				this.SetValue = fi.SetValue;
-				this.GetValue = fi.GetValue;
+				this.GetValue = fi.GetValue!;
 			}
 		}
 

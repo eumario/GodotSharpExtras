@@ -8,7 +8,7 @@ namespace Godot.Sharp.Extras {
 		/// <typeparam name="T">Class for Singleton/Autoload</typeparam>
 		/// <returns>Instance of the Singleton/Autoload</returns>
 		public static T Get<T>() {
-			var node = (Engine.GetMainLoop() as SceneTree).Root.GetNode($"/root/{typeof(T).Name}");
+			var node = (Engine.GetMainLoop() as SceneTree)!.Root.GetNode($"/root/{typeof(T).Name}");
 			return (T)System.Convert.ChangeType(node, typeof(T));
 		}
 
@@ -21,7 +21,7 @@ namespace Godot.Sharp.Extras {
 		public static T Get<T>(string name) {
 			if (!name.Contains("/"))
 				name = $"/root/{name}";
-			var node = (Engine.GetMainLoop() as SceneTree).Root.GetNode(name);
+			var node = (Engine.GetMainLoop() as SceneTree)!.Root.GetNode(name);
 			return (T)System.Convert.ChangeType(node, typeof(T));
 		}
 	}

@@ -32,7 +32,8 @@ namespace Godot.Sharp.Extras {
 		public static Array<T> GetChildren<T>(this Node node) where T : Node
 		{
 			var children = node.GetChildren().Cast<Node>();
-			return new Array<T>(children.Select(x => x as T).ToArray<T>());
+			
+			return new Array<T>(children.Select(x => x as T).OfType<T>().ToArray());
 		}
 
 		/// <summary>
@@ -41,7 +42,7 @@ namespace Godot.Sharp.Extras {
 		/// <typeparam name="T">Type of Node</typeparam>
 		/// <param name="node"></param>
 		/// <returns>First Node of T type.</returns>
-		public static T GetFirstNodeOfType<T>(this Node node) where T : Node
+		public static T? GetFirstNodeOfType<T>(this Node node) where T : Node
 		{
 			var children = node.GetChildren();
 			foreach(var child in children)
@@ -102,7 +103,7 @@ namespace Godot.Sharp.Extras {
 		/// <typeparam name="T">Type of Node</typeparam>
 		/// <param name="n"></param>
 		/// <returns>First Matching node of Type, or Null</returns>
-		public static T GetAncestor<T>(this Node n) where T : Node
+		public static T? GetAncestor<T>(this Node n) where T : Node
 		{
 			Node currentNode = n;
 			while (currentNode != n.GetTree().Root && !(currentNode is T))
@@ -116,7 +117,7 @@ namespace Godot.Sharp.Extras {
 		/// </summary>
 		/// <param name="n"></param>
 		/// <returns>Last Indexed child of the node.</returns>
-		public static Node GetLastChild(this Node n)
+		public static Node? GetLastChild(this Node n)
 		{
 			var count = n.GetChildCount();
 			if (count == 0) return null;
